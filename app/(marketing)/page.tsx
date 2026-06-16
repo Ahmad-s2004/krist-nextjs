@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image'; 
-import Footer from '@/components/footer';
+import Footer from '../../components/footer/index';
 
 export default function page() {
   const [loading, setLoading] = useState(true);
