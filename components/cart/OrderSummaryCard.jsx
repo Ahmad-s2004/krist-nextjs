@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function OrderSummaryCard({ subtotal }) {
     return (
       <div className="lg:col-span-5 bg-neutral-50 border border-neutral-100 p-6 sm:p-8 space-y-6 lg:sticky lg:top-6 rounded-lg md:rounded-none">
@@ -22,7 +24,7 @@ export default function OrderSummaryCard({ subtotal }) {
           </div>
           <p className="text-[11px] text-neutral-400 font-medium leading-normal">Prices are final. Local custom duties or tax calculation window applies at final address dispatch step.</p>
         </div>
-        <button className="w-full bg-black text-white border border-black py-4 font-bold text-xs tracking-widest uppercase hover:bg-transparent hover:text-black transition-all duration-300 rounded-none shadow-sm flex items-center justify-center gap-2 pt-4.5">Proceed To Checkout</button>
+        <Link href="/checkout" className="w-full bg-black text-white border border-black py-4 font-bold text-xs tracking-widest uppercase hover:bg-transparent hover:text-black transition-all duration-300 rounded-none shadow-sm flex items-center justify-center gap-2 pt-4.5">Proceed To Checkout</Link>
       </div>
     );
   }
