@@ -1,139 +1,185 @@
-"use client";
-export default function ContactPage() {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-  };
+'use client'
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image'; 
+
+export default function HomePage() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <div className="w-full bg-white font-sans text-gray-800 antialiased min-h-[calc(100vh-80px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
-        
-        <div className="lg:col-span-5 space-y-8 pr-0 lg:pr-8">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-black sm:text2xl sm:text-start text-center">
-              Contact Us
-            </h1>
-            <p className="mt-4 text-base text-gray-500 max-w-sm w-11/12 mx-auto">
-              We'd love to hear from you. Please fill out the form or reach out via our official channels.
+    <div className="bg-white min-h-screen text-gray-900 font-sans antialiased">
+      
+      {/* 1. HERO SECTION */}
+      <section className="bg-[#f3f4f6] px-4 py-16 sm:px-6 lg:px-8 flex items-center justify-center">
+        <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          
+          <div className="space-y-6 text-center md:text-left order-2 md:order-1 flex flex-col justify-center items-center md:items-start">
+            <p className="text-xs sm:text-sm font-semibold tracking-widest text-gray-500 uppercase">
+              Classic Exclusive
             </p>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-black leading-none">
+              Women’s Collection
+            </h1>
+            <p className="text-lg sm:text-xl font-bold text-gray-600 tracking-wide">
+              UPTO 40% OFF
+            </p>
+            <button className="bg-black text-white px-8 py-3 rounded-none text-xs font-bold tracking-widest uppercase hover:bg-gray-800 transition-all duration-300 transform active:scale-95 inline-flex items-center gap-2">
+              Shop Now <span>→</span>
+            </button>
+          </div>
+          
+          <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[4/5] lg:aspect-[1 disguise] order-1 md:order-2 overflow-hidden rounded-none">
+            {loading ? (
+              <div className="w-full h-full bg-gray-200 animate-pulse" />
+            ) : (
+              <div className="relative w-full h-full">
+                <div className="absolute inset-4 border border-white/40 z-10 pointer-events-none hidden sm:block"></div>
+                <Image 
+                  src="/images/hero-woman.jpg"
+                  alt="Women's Collection Hero"
+                  fill
+                  priority
+                  className="object-cover"
+                />
+              </div>
+            )}
           </div>
 
-          <div className="space-y-6 pt-4 border-t border-gray-100">
-            <div className="flex gap-4 items-start">
-              <div className="p-2.5 bg-gray-50 rounded-lg text-black shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold text-black tracking-wide uppercase">Our Store</h3>
-                <p className="mt-1 text-sm text-gray-600 leading-6">123 Fashion Street, Sector W,<br />Lahore, Pakistan</p>
-              </div>
-            </div>
-
-            <div className="flex gap-4 items-start">
-              <div className="p-2.5 bg-gray-50 rounded-lg text-black shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.622s.557-.83 1.16-1.162c.621-.343 1.301-.442 2.012-.016L7.9 6.94c.547.322.89.84.86 1.44a2.605 2.605 0 0 1-1.04 1.838l-.647.478a11.25 11.25 0 0 0 5.031 5.03l.478-.647c.34-.458.908-.76 1.44-.86a2.605 2.605 0 0 1 1.839 1.04l1.416 1.872c.426.711.327 1.391-.016 2.012a6.342 6.342 0 0 1-1.162 1.16c-1.394.945-3.52.56-5.875-1.795-2.356-2.354-2.74-4.48-1.795-5.875Z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold text-black tracking-wide uppercase">Call Us</h3>
-                <p className="mt-1 text-sm text-gray-600">+92 (300) 123-4567</p>
-              </div>
-            </div>
-
-            <div className="flex gap-4 items-start">
-              <div className="p-2.5 bg-gray-50 rounded-lg text-black shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold text-black tracking-wide uppercase">Support Email</h3>
-                <p className="mt-1 text-sm text-gray-600">support@krist.com</p>
-              </div>
-            </div>
-          </div>
         </div>
-        <div className="lg:col-span-7 bg-white border border-gray-100 rounded-2xl p-6 sm:p-10 shadow-sm">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="first-name" className="block text-xs font-semibold uppercase tracking-wider text-gray-500">
-                  First Name
-                </label>
-                <input
-                  type="text"
-                  id="first-name"
-                  required
-                  className="mt-2 block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm text-black focus:border-black focus:outline-none focus:ring-1 focus:ring-black placeholder-gray-400 bg-white"
-                  placeholder="John"
-                />
-              </div>
-              <div>
-                <label htmlFor="last-name" className="block text-xs font-semibold uppercase tracking-wider text-gray-500">
-                  Last Name
-                </label>
-                <input
-                  type="text"
-                  id="last-name"
-                  required
-                  className="mt-2 block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm text-black focus:border-black focus:outline-none focus:ring-1 focus:ring-black placeholder-gray-400 bg-white"
-                  placeholder="Doe"
-                />
-              </div>
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-gray-500">
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                required
-                className="mt-2 block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm text-black focus:border-black focus:outline-none focus:ring-1 focus:ring-black placeholder-gray-400 bg-white"
-                placeholder="johndoe@example.com"
-              />
-            </div>
-            <div>
-              <label htmlFor="subject" className="block text-xs font-semibold uppercase tracking-wider text-gray-500">
-                Subject
-              </label>
-              <input
-                type="text"
-                id="subject"
-                required
-                className="mt-2 block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm text-black focus:border-black focus:outline-none focus:ring-1 focus:ring-black placeholder-gray-400 bg-white"
-                placeholder="Order Query / Feedback"
-              />
-            </div>
-            <div>
-              <label htmlFor="message" className="block text-xs font-semibold uppercase tracking-wider text-gray-500">
-                Your Message
-              </label>
-              <textarea
-                id="message"
-                rows={5}
-                required
-                className="mt-2 block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm text-black focus:border-black focus:outline-none focus:ring-1 focus:ring-black placeholder-gray-400 resize-none bg-white"
-                placeholder="Write your message here..."
-              />
-            </div>
-            <div>
-              <button
-                type="submit"
-                className="w-full sm:w-auto px-8 py-3.5 bg-slate-900 text-white font-medium text-sm rounded-lg hover:bg-slate-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2"
+      </section>
+
+      {/* 2. SHOP BY CATEGORIES */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 flex justify-center">
+        <div className="max-w-7xl w-full space-y-12">
+          
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-black uppercase">
+              Shop by Categories
+            </h2>
+            <div className="w-12 h-0.5 bg-black mx-auto"></div>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            {['Kids', 'Women', 'Men'].map((category, index) => (
+              <div 
+                key={index} 
+                className={`relative aspect-[3/4] sm:aspect-[4/5] md:aspect-[3/4] group overflow-hidden bg-gray-50 border border-gray-100 ${
+                  index === 2 ? 'col-span-2 md:col-span-1 mx-auto w-1/2 md:w-full aspect-[3/4]' : 'w-full'
+                }`}
               >
-                Send Message
-              </button>
-            </div>
-          </form>
-        </div>
+                {loading ? (
+                  <div className="w-full h-full bg-gray-200 animate-pulse" />
+                ) : (
+                  <>
+                    <Image 
+                      src={`/images/category-${category.toLowerCase()}.jpg`}
+                      alt={`${category} Category`}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                    />
+                    <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300"></div>
+                    <div className="absolute bottom-4 inset-x-4 flex justify-center">
+                      <span className="w-full max-w-[140px] bg-white text-black py-2 text-center font-bold text-xs tracking-widest uppercase shadow-sm border border-gray-100 transform group-hover:-translate-y-1 transition-transform duration-300">
+                        {category}
+                      </span>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
 
-      </div>
+        </div>
+      </section>
+
+      {/* 3. OUR BESTSELLERS */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 flex justify-center border-t border-gray-100">
+        <div className="max-w-7xl w-full space-y-12">
+          
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-black uppercase">
+              Our Bestsellers
+            </h2>
+            <div className="w-12 h-0.5 bg-black mx-auto"></div>
+          </div>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+            {[
+              { id: 1, title: 'JUPITER KIDS SQUIGGLY UNISEX TRACK PANT', price: 'Rs. 1,350' },
+              { id: 2, title: 'JUPITER KIDS SUPERSTAR PREMIUM T-SHIRT', price: 'Rs. 890' },
+              { id: 3, title: 'JUPITER KIDS DAZZLING UNISEX POLO', price: 'Rs. 790' },
+              { id: 4, title: 'JUPITER KIDS TRACK SUIT / TWIN SET FOR KIDS', price: 'Rs. 2,500' },
+              { id: 5, title: 'JUPITER KIDS UNISEX POCKET TERRY CARGO TROUSER', price: 'Rs. 1,190' },
+              { id: 6, title: 'JUPITER KIDS ABLAZE UNISEX TRACK PAIR', price: 'Rs. 1,450' },
+            ].map((product) => (
+              <div key={product.id} className="flex flex-col group space-y-3">
+                
+                <div className="relative aspect-[3/4] bg-gray-50 overflow-hidden w-full border border-gray-100">
+                  {loading ? (
+                    <div className="w-full h-full bg-gray-200 animate-pulse" />
+                  ) : (
+                    <Image 
+                      src={`/images/product-${product.id}.jpg`}
+                      alt={product.title}
+                      fill
+                      className="object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
+                    />
+                  )}
+                </div>
+                
+                <div className="flex flex-col flex-grow space-y-1 px-1">
+                  {loading ? (
+                    <div className="space-y-2 py-1">
+                      <div className="h-3 bg-gray-200 rounded w-full animate-pulse" />
+                      <div className="h-3 bg-gray-200 rounded w-2/3 animate-pulse" />
+                    </div>
+                  ) : (
+                    <>
+                      <h3 className="text-xs font-bold tracking-tight text-gray-800 uppercase line-clamp-2 min-h-[2rem] leading-tight group-hover:text-black transition-colors duration-200">
+                        {product.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm font-black text-black tracking-wide">
+                        {product.price}
+                      </p>
+                    </>
+                  )}
+                </div>
+
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* 4. FEATURES BAR */}
+      <section className="bg-white border-t border-b border-gray-100 py-12 px-4 sm:px-6 lg:px-8 flex justify-center">
+        <div className="max-w-7xl w-full grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+          {[
+            { icon: '🚚', title: 'Free Shipping', desc: 'Free shipping for order above 2000' },
+            { icon: '🛡️', title: 'Money Guarantee', desc: 'Within 20 days for an exchange' },
+            { icon: '🎧', title: 'Online Support', desc: '24 hours a day, 7 days a week' },
+            { icon: '💳', title: 'Flexible Payment', desc: 'Pay with multiple credit cards' },
+          ].map((feature, idx) => (
+            <div key={idx} className="flex flex-col items-center text-center space-y-2 group">
+              <div className="text-2xl md:text-3xl transform group-hover:scale-110 transition-transform duration-300">
+                {feature.icon}
+              </div>
+              <h4 className="text-xs font-bold text-black uppercase tracking-widest">
+                {feature.title}
+              </h4>
+              <p className="text-[11px] sm:text-xs text-gray-400 max-w-[180px] sm:max-w-[220px] leading-relaxed">
+                {feature.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
     </div>
   );
 }
