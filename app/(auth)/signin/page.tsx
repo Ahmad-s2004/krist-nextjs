@@ -24,13 +24,12 @@ export default function LoginPage() {
 
     try {
       const res = await loginUserAction({ email, password });
-      console.log(res)
       if (res.success == true) {
         setSuccess(res.message || "Login successful! Redirecting...");
         setEmail('');
         setPassword('');
         window.location.href = '/';
-        console.log("oye cuteknfkl")
+        localStorage.setItem("isLoggedIn", "true")
       } else {
         setError(res.message || "Invalid credentials provided");
       }

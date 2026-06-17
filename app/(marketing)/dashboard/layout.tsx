@@ -2,16 +2,26 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const sidebarLinks = [
     { label: "Order History", path: "/dashboard/orders" },
     { label: "Account Settings", path: "/dashboard/settings" },
-    { label: "Log Out", path: "/logout" },
   ];
+
+  const handleLogout = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("token");
+    
+    window.location.href = "/signin";
+  };
 
   return (
     <div className="min-h-screen bg-white px-4 sm:px-6 lg:px-8 py-10 md:py-16 selection:bg-black selection:text-white flex justify-center">
@@ -39,6 +49,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </Link>
               );
             })}
+
+            <button
+              onClick={handleLogout}
+              className="w-full text-left px-4 py-3 text-neutral-500 hover:bg-neutral-100 hover:text-black transition-all duration-200 rounded-none font-bold uppercase tracking-widest"
+            >
+              Log Out
+            </button>
           </nav>
         </aside>
 

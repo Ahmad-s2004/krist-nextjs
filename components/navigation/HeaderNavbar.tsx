@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
@@ -19,6 +19,20 @@ export default function HeaderNavbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const pathname = usePathname();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      if (typeof window !== "undefined") {
+        const authFlag = localStorage.getItem("isLoggedIn") === "true";
+        setIsLoggedIn(authFlag);
+      }
+    };
+
+    checkAuth();
+    window.addEventListener("storage", checkAuth);
+    return () => window.removeEventListener("storage", checkAuth);
+  }, [pathname]);
 
   return (
     <div className="relative w-full font-sans">
@@ -82,9 +96,21 @@ export default function HeaderNavbar() {
                   </svg>
                 </button>
 
-                <Link href="/signin" className="hidden px-5 py-2.5 text-xs font-bold text-white uppercase tracking-widest transition-colors bg-black rounded-none hover:bg-neutral-800 md:block">
-                  Login
-                </Link>
+                {isLoggedIn ? (
+                  <Link 
+                    href="/dashboard" 
+                    className="hidden px-5 py-2.5 text-xs font-bold text-white uppercase tracking-widest transition-colors bg-black rounded-none hover:bg-neutral-800 md:block border border-black"
+                  >
+                    Account
+                  </Link>
+                ) : (
+                  <Link 
+                    href="/signin" 
+                    className="hidden px-5 py-2.5 text-xs font-bold text-white uppercase tracking-widest transition-colors bg-black rounded-none hover:bg-neutral-800 md:block border border-black"
+                  >
+                    Login
+                  </Link>
+                )}
               </div>
             </>
           ) : (
@@ -145,6 +171,14 @@ export default function HeaderNavbar() {
               </Link>
             );
           })}
+          
+          <Link
+            href={isLoggedIn ? "/dashboard" : "/signin"}
+            onClick={() => setIsOpen(false)}
+            className="px-5 py-3.5 border-b border-gray-50 bg-neutral-50 text-black md:hidden transition-colors font-black tracking-widest uppercase"
+          >
+            {isLoggedIn ? "My Account" : "Login / Register"}
+          </Link>
         </div>
       </div>
 
