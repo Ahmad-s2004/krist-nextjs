@@ -22,3 +22,16 @@ export const getProductsByCategory = async (category: string): Promise<IProduct[
     return handleServerError(error);
   }
 };
+export const getKidsBestSellers = async (): Promise<IProduct[] | any> => {
+  try {
+    await connectDB();
+    
+    const products = await Product.find({ category: "Kids" })
+      .limit(6)
+      .lean();
+      
+    return products as unknown as IProduct[];
+  } catch (error: any) {
+    return handleServerError(error);
+  }
+};

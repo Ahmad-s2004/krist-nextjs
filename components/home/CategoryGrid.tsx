@@ -18,7 +18,7 @@ export default function CategoryGrid({ loading }) {
             ) : (
               <>
                 <Image 
-                  src={`/images/category-${category.toLowerCase()}.jpg`}
+                  src={`/${category.toLowerCase()}.webp`}
                   alt={`${category} Category`}
                   fill
                   className="object-cover group-hover:scale-105 transition duration-500"

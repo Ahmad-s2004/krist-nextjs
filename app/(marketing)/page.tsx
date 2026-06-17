@@ -1,17 +1,11 @@
-"use client";
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
 import HeroSection from '@/components/home/HeroSection';
 import Footer from '@/components/footer';
-
+import BestSellers from '@/components/home/BestSellers';
 
 const CategoryGrid = dynamic(() => import('@/components/home/CategoryGrid'), {
   loading: () => <div className="h-[400px] w-full bg-gray-50 animate-pulse" />,
-});
-
-const BestSellers = dynamic(() => import('@/components/home/BestSellers'), {
-  loading: () => <div className="h-[500px] w-full bg-gray-50 animate-pulse" />,
 });
 
 const ServiceFeatures = dynamic(() => import('@/components/home/ServiceFeatures'), {
@@ -19,22 +13,15 @@ const ServiceFeatures = dynamic(() => import('@/components/home/ServiceFeatures'
 });
 
 export default function HomePage() {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <>
-    <div className="bg-white min-h-screen selection:bg-black selection:text-white">
-      <HeroSection loading={loading} />
-      <CategoryGrid loading={loading} />
-      <BestSellers loading={loading} />
-      <ServiceFeatures />
-    </div>
-    <Footer/>
+      <div className="bg-white min-h-screen selection:bg-black selection:text-white">
+        <HeroSection loading={false} />
+        <CategoryGrid loading={false} />
+        <BestSellers />
+        <ServiceFeatures />
+      </div>
+      <Footer />
     </>
   );
 }
