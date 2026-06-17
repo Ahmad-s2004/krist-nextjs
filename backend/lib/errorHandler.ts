@@ -1,6 +1,8 @@
-export let handleServerError = (error: unknown) =>{
-if(error instanceof Error){
-    return {success: false, message: error.message};
-}
-return {success: true, message: "An unexpected error occurred"};
-}
+import { requestHandler } from "./requestHandler";
+
+export const handleServerError = (error: unknown) => {
+  if (error instanceof Error) {
+    return requestHandler(false, 400, error.message);
+  }
+  return requestHandler(false, 500, "An unexpected architectural error occurred");
+};
