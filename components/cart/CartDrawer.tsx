@@ -41,7 +41,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           {MOCK_CART_ITEMS.map((item, idx) => (
             <div key={item.id} className={`flex gap-4 text-xs font-medium tracking-wide ${idx !== 0 ? "pt-6" : ""}`}>
               <div className="relative w-20 h-24 bg-neutral-50 border border-neutral-100 overflow-hidden flex-shrink-0">
-                <Image src={item.image} alt={item.title} fill className="object-cover object-center" />
+                {/* <Image src={item.image} alt={item.title} fill className="object-cover object-center" /> */}
               </div>
               <div className="flex-1 flex flex-col justify-between py-0.5">
                 <div className="space-y-1">

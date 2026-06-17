@@ -24,15 +24,15 @@ export default function ProductGrid({ products, loading }) {
               <div className="h-4 bg-gray-100 w-1/4 rounded-none" />
             </div>
           ))
-        : products.map((product) => (
+        : products.map((product:any) => (
             <div key={product.id} className="flex flex-col group space-y-3">
               
               <Link 
-                href={`/products/${product.category.toLowerCase()}/${product.id}`}
+                href={`/products/${product.category.toLowerCase()}/${product._id}`}
                 className="relative h-[380px] bg-gray-50 border border-gray-100/60 overflow-hidden rounded-none cursor-pointer block"
               >
                 <Image
-                  src={product.image}
+                  src={`https://krist-server.vercel.app/${product.gallery[0].img1}`}
                   alt={product.title}
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
@@ -42,7 +42,7 @@ export default function ProductGrid({ products, loading }) {
 
               <div className="flex flex-col space-y-1 px-1">
                 <Link 
-                  href={`/products/${product.category.toLowerCase()}/${product.id}`}
+                  href={`/products/${product.category.toLowerCase()}/${product._id}`}
                   className="hover:underline decoration-neutral-400 underline-offset-4"
                 >
                   <h3 className="text-xs font-bold tracking-tight text-neutral-800 uppercase line-clamp-2 leading-tight cursor-pointer">
