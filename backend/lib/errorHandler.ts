@@ -1,8 +1,8 @@
-import { requestHandler } from "./requestHandler";
-
-export const handleServerError = (error: unknown) => {
-  if (error instanceof Error) {
-    return requestHandler(false, 400, error.message);
+export const handleServerError = (error: any) => {
+    console.error("Backend Error Trace:", error); 
+    return {
+      success: false,
+      code: 500,
+      message: error.message || "An internal server error occurred"
+    }
   }
-  return requestHandler(false, 500, "An unexpected architectural error occurred");
-};

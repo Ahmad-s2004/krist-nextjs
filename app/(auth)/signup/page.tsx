@@ -3,36 +3,53 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { registerUser } from '@/backend/services/authService';
 
-export default function page() {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    agreeTerms: false
-  });
+export default function RegisterPage() {
+  const router = useRouter();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => setLoading(false), 2000);
+    setError('');
+    setSuccess('');
+
+    try {
+      const res = await registerUser({ name: name.trim(), email, password });
+
+      if (res.success) {
+        setSuccess(res.message || "Account created successfully!");
+        setName('');
+        setEmail('');
+        setPassword('');
+        setAgreeTerms(false);
+        
+        setTimeout(() => {
+          router.push('/signin');
+        }, 1000);
+      } else {
+        setError(res.message || "Registration failed");
+      }
+    } catch (err) {
+      setError("An unexpected network error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-[calc(100vh-73px)] w-full flex items-center justify-center bg-white px-4 sm:px-6 lg:px-8 selection:bg-black selection:text-white">
       <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-20 items-center py-8">
         
-        {/* Left Side: Symmetrical Visual Showcase (Hidden on Mobile) */}
         <div className="relative hidden lg:block w-full aspect-[4/5] bg-gray-50 overflow-hidden border border-gray-100">
           <div className="absolute inset-6 border border-white/30 z-10 pointer-events-none"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 z-10" />
@@ -50,7 +67,6 @@ export default function page() {
           </div>
         </div>
 
-        {/* Right Side: Clean Symmetrical Form */}
         <div className="w-full max-w-md mx-auto space-y-8 flex flex-col justify-center">
           <div className="space-y-2 text-center lg:text-left">
             <h1 className="text-3xl font-black tracking-tight text-black uppercase">
@@ -61,40 +77,31 @@ export default function page() {
             </p>
           </div>
 
+          {error && (
+            <div className="p-3 text-xs font-bold tracking-wide uppercase border rounded-none bg-red-50 border-red-200 text-red-800 transition-all duration-200">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="p-3 text-xs font-bold tracking-wide uppercase border rounded-none bg-green-50 border-green-200 text-green-800 transition-all duration-200">
+              {success}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
-            
-            {/* Symmetrical Grid for Name Fields */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label htmlFor="firstName" className="text-xs font-bold uppercase tracking-wider text-gray-700">
-                  First Name
-                </label>
-                <input
-                  id="firstName"
-                  name="firstName"
-                  type="text"
-                  required
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  placeholder="John"
-                  className="w-full bg-white border border-gray-200 focus:border-black rounded-none px-4 py-3 text-sm text-black outline-none transition-all duration-200 placeholder-gray-400"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label htmlFor="lastName" className="text-xs font-bold uppercase tracking-wider text-gray-770">
-                  Last Name
-                </label>
-                <input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  required
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  placeholder="Doe"
-                  className="w-full bg-white border border-gray-200 focus:border-black rounded-none px-4 py-3 text-sm text-black outline-none transition-all duration-200 placeholder-gray-400"
-                />
-              </div>
+            <div className="space-y-1.5">
+              <label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-gray-770">
+                Full Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="John Doe"
+                className="w-full bg-white border border-gray-200 focus:border-black rounded-none px-4 py-3 text-sm text-black outline-none transition-all duration-200 placeholder-gray-400"
+              />
             </div>
 
             <div className="space-y-1.5">
@@ -103,11 +110,10 @@ export default function page() {
               </label>
               <input
                 id="email"
-                name="email"
                 type="email"
                 required
-                value={formData.email}
-                onChange={handleChange}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 className="w-full bg-white border border-gray-200 focus:border-black rounded-none px-4 py-3 text-sm text-black outline-none transition-all duration-200 placeholder-gray-400"
               />
@@ -119,11 +125,10 @@ export default function page() {
               </label>
               <input
                 id="password"
-                name="password"
                 type="password"
                 required
-                value={formData.password}
-                onChange={handleChange}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Minimum 8 characters"
                 className="w-full bg-white border border-gray-200 focus:border-black rounded-none px-4 py-3 text-sm text-black outline-none transition-all duration-200 placeholder-gray-400"
               />
@@ -132,11 +137,10 @@ export default function page() {
             <div className="flex items-start pt-1">
               <input
                 id="agreeTerms"
-                name="agreeTerms"
                 type="checkbox"
                 required
-                checked={formData.agreeTerms}
-                onChange={handleChange}
+                checked={agreeTerms}
+                onChange={(e) => setAgreeTerms(e.target.checked)}
                 className="h-4 w-4 mt-0.5 accent-black rounded-none border-gray-300 text-black focus:ring-0 cursor-pointer"
               />
               <label htmlFor="agreeTerms" className="ml-2.5 block text-xs font-bold uppercase tracking-wider text-gray-600 cursor-pointer select-none leading-normal">

@@ -1,24 +1,44 @@
 "use client";
-import { useState } from 'react';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { loginUserAction } from '@/backend/services/authService';
 
-export default function page() {
-  const [formData, setFormData] = useState({ email: '', password: '', rememberMe: false });
+export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => setLoading(false), 2000); 
+    setError('');
+    setSuccess('');
+
+    try {
+      const res = await loginUserAction({ email, password });
+      console.log(res)
+      if (res.success == true) {
+        setSuccess(res.message || "Login successful! Redirecting...");
+        setEmail('');
+        setPassword('');
+        window.location.href = '/';
+        console.log("oye cuteknfkl")
+      } else {
+        setError(res.message || "Invalid credentials provided");
+      }
+    } catch (err) {
+      setError("An unexpected network authentication error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,23 +72,34 @@ export default function page() {
             </p>
           </div>
 
+          {error && (
+            <div className="p-3 text-xs font-bold tracking-wide uppercase border rounded-none bg-red-50 border-red-200 text-red-800 transition-all duration-200">
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="p-3 text-xs font-bold tracking-wide uppercase border rounded-none bg-green-50 border-green-200 text-green-800 transition-all duration-200">
+              {success}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-5">
+            
             <div className="space-y-1.5">
               <label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-gray-700">
                 Email Address
               </label>
               <input
                 id="email"
-                name="email"
                 type="email"
                 required
-                value={formData.email}
-                onChange={handleChange}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 className="w-full bg-white border border-gray-200 focus:border-black rounded-none px-4 py-3 text-sm text-black outline-none transition-all duration-200 placeholder-gray-400"
               />
             </div>
-
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-gray-700">
@@ -83,11 +114,10 @@ export default function page() {
               </div>
               <input
                 id="password"
-                name="password"
                 type="password"
                 required
-                value={formData.password}
-                onChange={handleChange}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 className="w-full bg-white border border-gray-200 focus:border-black rounded-none px-4 py-3 text-sm text-black outline-none transition-all duration-200 placeholder-gray-400"
               />
@@ -96,10 +126,9 @@ export default function page() {
             <div className="flex items-center">
               <input
                 id="rememberMe"
-                name="rememberMe"
                 type="checkbox"
-                checked={formData.rememberMe}
-                onChange={handleChange}
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
                 className="h-4 w-4 accent-black rounded-none border-gray-300 text-black focus:ring-0 cursor-pointer"
               />
               <label htmlFor="rememberMe" className="ml-2.5 block text-xs font-bold uppercase tracking-wider text-gray-600 cursor-pointer select-none">
