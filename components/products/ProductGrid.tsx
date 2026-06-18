@@ -18,6 +18,8 @@ interface ProductGridProps {
 }
 
 export default function ProductGrid({ products, loading }: ProductGridProps) {
+  const baseUri = process.env.NEXT_PUBLIC_IMG_URI || "https://krist-server.vercel.app";
+
   if (loading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 animate-pulse">
@@ -47,6 +49,14 @@ export default function ProductGrid({ products, loading }: ProductGridProps) {
       {products.map((product) => {
         const imageUrl = product?.gallery?.[0]?.img1;
         
+        const cleanImageUrl = imageUrl 
+          ? (imageUrl.startsWith("http") ? imageUrl : (imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`))
+          : null;
+
+        const finalSrc = cleanImageUrl
+          ? (cleanImageUrl.startsWith("http") ? cleanImageUrl : `${baseUri}${cleanImageUrl}`)
+          : null;
+        
         return (
           <Link 
             key={product._id} 
@@ -54,9 +64,9 @@ export default function ProductGrid({ products, loading }: ProductGridProps) {
             className="group flex flex-col h-full"
           >
             <div className="relative w-full aspect-[3/4] bg-neutral-50 border border-neutral-100 overflow-hidden mb-4">
-              {imageUrl ? (
+              {finalSrc ? (
                 <Image 
-                  src={imageUrl} 
+                  src={finalSrc} 
                   alt={product.title} 
                   fill 
                   sizes="(max-w-768px) 50vw, 25vw"
