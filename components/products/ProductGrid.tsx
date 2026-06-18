@@ -24,8 +24,8 @@ export default function ProductGrid({ products, loading }) {
               <div className="h-4 bg-gray-100 w-1/4 rounded-none" />
             </div>
           ))
-        : products.map((product:any) => (
-            <div key={product.id} className="flex flex-col group space-y-3">
+        : products.map((product:any, key:any) => (
+            <div key={product.key} className="flex flex-col group space-y-3">
               
               <Link 
                 href={`/products/${product.category.toLowerCase()}/${product._id}`}

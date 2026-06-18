@@ -6,6 +6,8 @@ import { store, RootState } from "@/redux/store";
 import { removeFromCart, updateQuantity } from "@/redux/cartSlice";
 import Link from "next/link";
 import Image from "next/image";
+import AuthAlertModal from "../ui/AuthAlertModal";
+import { useRouter } from "next/navigation";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -14,8 +16,21 @@ interface CartDrawerProps {
 
 function CartDrawerInner({ isOpen, onClose }: CartDrawerProps) {
   const dispatch = useDispatch();
+  const router = useRouter();
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const [isMounted, setIsMounted] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+
+  const handleCheckoutClick = () => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+    if (!isLoggedIn) {
+      setIsAlertOpen(true);
+    } else {
+      onClose();
+      router.push("/checkout");
+    }
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -122,13 +137,13 @@ function CartDrawerInner({ isOpen, onClose }: CartDrawerProps) {
             >
               Open Full Shopping Cart
             </Link>
-            <Link 
-              href="/checkout" 
-              onClick={onClose}
+            <button
+              onClick={handleCheckoutClick}
               className="block w-full text-center bg-transparent text-neutral-500 border border-neutral-200 py-3.5 font-bold text-xs tracking-widest uppercase hover:text-black hover:border-black transition-colors rounded-none"
             >
               Proceed To Checkout
-            </Link>
+            </button>
+            <AuthAlertModal isOpen={isAlertOpen} onClose={() => setIsAlertOpen(false)} />
           </div>
         </div>
       </div>
