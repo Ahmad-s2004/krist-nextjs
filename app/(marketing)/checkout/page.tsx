@@ -143,7 +143,7 @@ export default function CheckoutPage() {
             {MOCK_CHECKOUT_ITEMS.map((item, idx) => (
               <div key={item.id} className={`flex gap-4 text-xs font-medium tracking-wide ${idx !== 0 ? "pt-4 mt-4" : ""}`}>
                 <div className="relative w-12 h-16 bg-white border border-neutral-200 overflow-hidden flex-shrink-0">
-                  <Image src={item.image} alt={item.title} fill className="object-cover object-center" />
+                  {/* <Image src={item.image} alt={item.title} fill className="object-cover object-center" /> */}
                 </div>
                 <div className="flex-1 flex flex-col justify-center space-y-0.5">
                   <h4 className="font-bold uppercase line-clamp-1 text-neutral-900">{item.title}</h4>

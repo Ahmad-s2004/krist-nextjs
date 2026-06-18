@@ -1,69 +1,133 @@
 "use client";
 
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch, Provider } from "react-redux";
+import { store, RootState } from "@/redux/store";
+import { removeFromCart, updateQuantity } from "@/redux/cartSlice";
+import Image from "next/image";
 import Link from "next/link";
-import CartItemRow from "@/components/cart/CartItemRow";
-import OrderSummaryCard from "@/components/cart/OrderSummaryCard";
-import Footer from '@/components/footer'
+import QuantitySelector from "@/components/cart/QuantitySelector";
 
-const INITIAL_CART_MOCK = [
-  { id: 1, name: "TRENDY WARM INSIDE FUR BEANIE", color: "red", size: "small", originalPrice: 599, price: 581, quantity: 1, image: "/images/beanie.jpg" },
-  { id: 2, name: "JUPITER KIDS DAZZLING UNISEX POLO", color: "black/red", size: "4-5", originalPrice: 799, price: 719, quantity: 1, image: "/images/polo.jpg" },
-];
+function CartPageInner() {
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const [isMounted, setIsMounted] = useState(false);
 
-export default function CartPage() {
-  const [cartItems, setCartItems] = useState(INITIAL_CART_MOCK);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-  const handleQuantityMutation = (id, amount) => {
-    setCartItems((prevItems) =>
-      prevItems
-        .map((item) => (item.id === id ? { ...item, quantity: Math.max(0, item.quantity + amount) } : item))
-        .filter((item) => item.quantity > 0)
-    );
+  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const deliveryCharges = cartItems.length > 0 ? 250 : 0;
+  const total = subtotal + deliveryCharges;
+
+  const handleQuantityChange = (id: string, size: string, color: string, currentQty: number, delta: number) => {
+    const newQty = currentQty + delta;
+    if (newQty >= 1) {
+      dispatch(updateQuantity({ id, size, color, quantity: newQty }));
+    }
   };
 
-  const calculateSubtotal = () => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const handleRemove = (id: string, size: string, color: string) => {
+    dispatch(removeFromCart({ id, size, color }));
+  };
+
+  if (!isMounted) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4 font-sans text-black">
+        <div className="w-12 h-0.5 bg-neutral-200 animate-pulse" />
+      </div>
+    );
+  }
+
+  if (cartItems.length === 0) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4 font-sans text-black">
+        <h2 className="text-xl font-black uppercase tracking-tight">Your Bag is Empty</h2>
+        <p className="text-xs text-neutral-400 uppercase tracking-widest">Add items to get started</p>
+        <Link 
+          href="/" 
+          className="bg-black text-white px-8 py-3 text-xs font-black uppercase tracking-widest border border-black hover:bg-transparent hover:text-black transition duration-300"
+        >
+          Continue Shopping
+        </Link>
+      </div>
+    );
+  }
 
   return (
-    <>
-    <div className="min-h-[calc(100vh-73px)] w-full bg-white px-4 sm:px-6 lg:px-8 py-10 md:py-16 selection:bg-black selection:text-white flex justify-center">
-      <div className="max-w-7xl w-full space-y-10 md:space-y-12">
-        <div className="space-y-2 border-b border-gray-100 pb-5">
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-black uppercase">Shopping Cart</h1>
-          <p className="text-xs sm:text-sm text-gray-500 font-medium tracking-wide">You have {cartItems.length} curated {cartItems.length === 1 ? 'item' : 'items'} in your bag.</p>
-        </div>
-
-        {cartItems.length === 0 ? (
-          <div className="text-center py-24 border border-dashed border-gray-200 space-y-5">
-            <p className="text-sm text-gray-400 font-medium tracking-wide">Your cart feels light. Let&apos;s add some products!</p>
-            <Link href="/" className="inline-block bg-black text-white px-8 py-3.5 text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-all">Continue Shopping</Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-16 items-start">
-            <div className="lg:col-span-7 space-y-6">
-              <div className="hidden md:grid grid-cols-12 pb-4 border-b border-gray-200 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                <div className="col-span-6">Product Details</div>
-                <div className="col-span-2 text-center">Price</div>
-                <div className="col-span-2 text-center">Quantity</div>
-                <div className="col-span-2 text-right">Total</div>
+    <main className="min-h-screen bg-white py-12 px-4 lg:px-20 max-w-7xl mx-auto font-sans text-black selection:bg-black selection:text-white">
+      <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight mb-10">Your Bag</h1>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <div className="lg:col-span-8 space-y-6">
+          {cartItems.map((item) => (
+            <div key={`${item.id}-${item.size}-${item.color}`} className="flex gap-4 sm:gap-6 pb-6 border-b border-neutral-100 items-start">
+              <div className="relative w-24 h-32 bg-gray-50 border border-neutral-100 overflow-hidden flex-shrink-0">
+                <Image src={item.image} alt={item.title} fill className="object-cover object-top" />
               </div>
-              <div className="space-y-4 md:space-y-0 md:divide-y md:divide-gray-100">
-                {cartItems.map((item) => (
-                  <CartItemRow 
-                    key={item.id} 
-                    item={item} 
-                    onQuantityChange={(amount) => handleQuantityMutation(item.id, amount)} 
-                    onRemove={() => handleQuantityMutation(item.id, -item.quantity)} 
-                  />
-                ))}
+              
+              <div className="flex flex-col sm:flex-row justify-between w-full gap-4">
+                <div className="space-y-2">
+                  <h3 className="text-xs font-bold uppercase tracking-tight text-neutral-900 line-clamp-2 max-w-md">{item.title}</h3>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 space-y-0.5">
+                    <p>Size: <span className="text-black">{item.size}</span></p>
+                    <p>Color: <span className="text-black">{item.color}</span></p>
+                  </div>
+                  <div className="pt-2">
+                    <QuantitySelector 
+                      quantity={item.quantity}
+                      onIncrement={() => handleQuantityChange(item.id, item.size, item.color, item.quantity, 1)}
+                      onDecrement={() => handleQuantityChange(item.id, item.size, item.color, item.quantity, -1)}
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex sm:flex-col justify-between sm:items-end flex-row items-center h-full sm:min-h-[110px]">
+                  <p className="text-sm font-black">Rs. {(item.price * item.quantity).toLocaleString()}</p>
+                  <button 
+                    onClick={() => handleRemove(item.id, item.size, item.color)}
+                    className="text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-black transition underline sm:no-underline"
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
             </div>
-            <OrderSummaryCard subtotal={calculateSubtotal()} />
+          ))}
+        </div>
+
+        <div className="lg:col-span-4 bg-gray-50 p-6 space-y-6 border border-neutral-100">
+          <h2 className="text-sm font-black uppercase tracking-wider border-b border-neutral-200 pb-3">Order Summary</h2>
+          
+          <div className="space-y-3 text-xs font-bold uppercase tracking-wider text-neutral-600">
+            <div className="flex justify-between">
+              <span>Subtotal</span>
+              <span className="text-black font-black">Rs. {subtotal.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Delivery</span>
+              <span className="text-black font-black">Rs. {deliveryCharges.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between border-t border-neutral-200 pt-4 text-sm text-black font-black">
+              <span>Total</span>
+              <span>Rs. {total.toLocaleString()}</span>
+            </div>
           </div>
-        )}
+          
+          <button className="w-full bg-black text-white border border-black py-4 text-xs font-black uppercase tracking-widest hover:bg-transparent hover:text-black transition duration-300">
+            Proceed To Checkout
+          </button>
+        </div>
       </div>
-    </div>
-    <Footer/>
-    </>
+    </main>
+  );
+}
+
+export default function CartPage() {
+  return (
+    <Provider store={store}>
+      <CartPageInner />
+    </Provider>
   );
 }

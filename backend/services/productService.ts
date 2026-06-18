@@ -49,3 +49,29 @@ export const getProductById = async (id: string): Promise<IProduct | any> => {
     return handleServerError(error);
   }
 };
+export const ProductService = {
+  searchProducts: async (query: string) => {
+    try {
+      await connectDB();
+      
+      if (!query) {
+        return [];
+      }
+
+      const searchFilter = {
+        $or: [
+          { title: { $regex: query, $options: "i" } },
+          { category: { $regex: query, $options: "i" } },
+          { description: { $regex: query, $options: "i" } }
+        ]
+      };
+
+      const products = await Product.find(searchFilter).lean();
+      
+      return JSON.parse(JSON.stringify(products));
+    } catch (error) {
+      console.error("Error in searchProducts service:", error);
+      return [];
+    }
+  }
+};

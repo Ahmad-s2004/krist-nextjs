@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
+import { Provider, useDispatch } from "react-redux";
+import { store } from "@/redux/store";
+import { addToCart } from "@/redux/cartSlice";
 import QuantitySelector from "@/components/cart/QuantitySelector";
 
 interface ClientWrapperProps {
@@ -17,10 +20,31 @@ interface ClientWrapperProps {
   children: React.ReactNode;
 }
 
-export default function ProductDetailsClientWrapper({ product, children }: ClientWrapperProps) {
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0] || "");
+function ProductDetailsInner({ product, children }: ClientWrapperProps) {
+  const dispatch = useDispatch();
+  const [selectedSize, setSelectedSize] = useState(product.sizes[0] || "S");
   const [selectedColor, setSelectedColor] = useState(product.colors[0] || "");
   const [quantity, setQuantity] = useState(1);
+
+  const handleAddToBag = () => {
+    dispatch(
+      addToCart({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.images[0] || "",
+        size: selectedSize,
+        color: selectedColor,
+        quantity: quantity,
+      })
+    );
+    setSelectedSize("S")
+    setQuantity(1)
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   return (
     <div className="space-y-6 w-full">
@@ -74,12 +98,23 @@ export default function ProductDetailsClientWrapper({ product, children }: Clien
       </div>
 
       <div className="pt-4">
-        <button className="w-full bg-black text-white border border-black py-4 font-bold text-xs tracking-widest uppercase hover:bg-transparent hover:text-black transition-all duration-300 rounded-none shadow-sm">
+        <button 
+          onClick={handleAddToBag}
+          className="w-full bg-black text-white border border-black py-4 font-bold text-xs tracking-widest uppercase hover:bg-transparent hover:text-black transition-all duration-300 rounded-none shadow-sm"
+        >
           Add To Bag
         </button>
       </div>
 
       {children}
     </div>
+  );
+}
+
+export default function ProductDetailsClientWrapper(props: ClientWrapperProps) {
+  return (
+    <Provider store={store}>
+      <ProductDetailsInner {...props} />
+    </Provider>
   );
 }

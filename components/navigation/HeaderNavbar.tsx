@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import CartDrawer from "@/components/cart/CartDrawer";
+import { useDispatch, useSelector, Provider } from "react-redux";
+import { store, RootState } from "@/redux/store";
 
 const NAV_ITEMS = [
   { label: "Home", path: "/" },
@@ -14,14 +16,23 @@ const NAV_ITEMS = [
   { label: "Contact", path: "/contact" },
 ];
 
-export default function HeaderNavbar() {
+function HeaderNavbarInner() {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const pathname = usePathname();
+  
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const totalItemsCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   useEffect(() => {
+    setIsMounted(true);
     const checkAuth = () => {
       if (typeof window !== "undefined") {
         const authFlag = localStorage.getItem("isLoggedIn") === "true";
@@ -33,6 +44,15 @@ export default function HeaderNavbar() {
     window.addEventListener("storage", checkAuth);
     return () => window.removeEventListener("storage", checkAuth);
   }, [pathname]);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+      setIsSearchOpen(false);
+    }
+  };
 
   return (
     <div className="relative w-full font-sans">
@@ -89,11 +109,16 @@ export default function HeaderNavbar() {
                 
                 <button 
                   onClick={() => setIsCartOpen(true)}
-                  className="p-1 transition-colors hover:text-black"
+                  className="p-1 transition-colors hover:text-black relative"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.116 60.116 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                   </svg>
+                  {isMounted && totalItemsCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 bg-black text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center tracking-tighter border border-white">
+                      {totalItemsCount}
+                    </span>
+                  )}
                 </button>
 
                 {isLoggedIn ? (
@@ -114,27 +139,33 @@ export default function HeaderNavbar() {
               </div>
             </>
           ) : (
-            <div className="w-full flex items-center gap-4 transition-all duration-300">
+            <form onSubmit={handleSearchSubmit} className="w-full flex items-center gap-4 transition-all duration-300">
               <div className="relative flex-grow max-w-3xl mx-auto flex items-center bg-gray-50 border border-gray-200 rounded-none px-4 py-2 focus-within:border-neutral-400 transition-all duration-200">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-gray-400 flex-shrink-0 mr-2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                 </svg>
                 <input 
                   type="text" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search for products, brands and more..." 
                   autoFocus
                   className="w-full bg-transparent text-xs font-bold uppercase tracking-wide text-black outline-none placeholder-gray-400"
                 />
               </div>
               <button 
-                onClick={() => setIsSearchOpen(false)}
+                type="button"
+                onClick={() => {
+                  setIsSearchOpen(false);
+                  setSearchQuery("");
+                }}
                 className="p-1.5 text-gray-500 hover:text-black hover:bg-gray-100 rounded-none transition-all duration-200 flex-shrink-0"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
-            </div>
+            </form>
           )}
 
         </div>
@@ -184,5 +215,13 @@ export default function HeaderNavbar() {
 
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </div>
+  );
+}
+
+export default function HeaderNavbar() {
+  return (
+    <Provider store={store}>
+      <HeaderNavbarInner />
+    </Provider>
   );
 }
