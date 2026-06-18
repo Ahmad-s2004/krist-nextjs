@@ -28,8 +28,8 @@ export default function LoginPage() {
         setSuccess(res.message || "Login successful! Redirecting...");
         setEmail('');
         setPassword('');
-        window.location.href = '/';
         localStorage.setItem("isLoggedIn", "true")
+        window.location.href = '/';
       } else {
         setError(res.message || "Invalid credentials provided");
       }

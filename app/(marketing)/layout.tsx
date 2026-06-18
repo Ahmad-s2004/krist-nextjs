@@ -21,14 +21,11 @@ interface RootLayoutProps {
 }
 export default function RootLayout( {children}: RootLayoutProps ) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-white text-gray-800">
+    <>
         <HeaderNavbar />
         <main className="flex-1">
           {children}
         </main>
-
-      </body>
-    </html>
+    </>
   );
 }
