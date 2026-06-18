@@ -13,6 +13,10 @@ interface ProductType {
   category: string;
   price: number;
   image: string;
+  gallery?: {
+    img1: string;
+    [key: string]: any;
+  }[];
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
