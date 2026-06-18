@@ -3,14 +3,9 @@
 import React from "react";
 import Link from "next/link";
 
-interface LinkItem {
-  label: string;
-  href: string;
-}
-
 interface LinkColumnProps {
   title: string;
-  links: LinkItem[];
+  links: string[];
 }
 
 export default function LinkColumn({ title, links }: LinkColumnProps) {
@@ -20,16 +15,20 @@ export default function LinkColumn({ title, links }: LinkColumnProps) {
         {title}
       </h5>
       <ul className="space-y-3">
-        {links.map((link, index) => (
-          <li key={index}>
-            <Link
-              href={link.href}
-              className="text-neutral-400 text-xs md:text-sm uppercase tracking-wide hover:text-white transition-colors duration-200"
-            >
-              {link.label}
-            </Link>
-          </li>
-        ))}
+        {links.map((link, index) => {
+          const dynamicHref = `/${link.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+          
+          return (
+            <li key={index}>
+              <Link
+                href={dynamicHref}
+                className="text-neutral-400 text-xs md:text-sm uppercase tracking-wide hover:text-white transition-colors duration-200"
+              >
+                {link}
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
