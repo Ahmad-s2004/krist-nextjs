@@ -1,13 +1,41 @@
 "use client";
 
-import Image from "next/image";
+import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
-export default function ProductGrid({ products, loading }) {
+interface ProductType {
+  _id: string;
+  title: string;
+  category: string;
+  price: number;
+  gallery?: { img1: string }[];
+}
+
+interface ProductGridProps {
+  products: ProductType[];
+  loading: boolean;
+}
+
+export default function ProductGrid({ products, loading }: ProductGridProps) {
+  if (loading) {
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 animate-pulse">
+        {[...Array(4)].map((_, index) => (
+          <div key={index} className="flex flex-col h-full space-y-4">
+            <div className="w-full aspect-[3/4] bg-neutral-100" />
+            <div className="h-3 bg-neutral-100 w-2/3" />
+            <div className="h-3 bg-neutral-100 w-1/3" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   if (!loading && products.length === 0) {
     return (
       <div className="text-center py-20 border border-dashed border-gray-200">
-        <p className="text-sm text-gray-400 font-medium tracking-wide">
+        <p className="text-sm text-gray-400 font-medium tracking-wide uppercase">
           No products match your custom parameters.
         </p>
       </div>
@@ -15,51 +43,41 @@ export default function ProductGrid({ products, loading }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
-      {loading
-        ? Array.from({ length: 6 }).map((_, idx) => (
-            <div key={idx} className="space-y-4 animate-pulse">
-              <div className="w-full h-[380px] bg-gray-100 rounded-none" />
-              <div className="h-4 bg-gray-100 w-3/4 rounded-none" />
-              <div className="h-4 bg-gray-100 w-1/4 rounded-none" />
-            </div>
-          ))
-        : products.map((product:any, key:any) => (
-            <div key={product.key} className="flex flex-col group space-y-3">
-              
-              <Link 
-                href={`/products/${product.category.toLowerCase()}/${product._id}`}
-                className="relative h-[380px] bg-gray-50 border border-gray-100/60 overflow-hidden rounded-none cursor-pointer block"
-              >
-                <Image
-                  src={`https://krist-server.vercel.app/${product.gallery[0].img1}`}
-                  alt={product.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover object-center group-hover:scale-103 transition duration-500"
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10">
+      {products.map((product) => {
+        const imageUrl = product?.gallery?.[0]?.img1;
+        
+        return (
+          <Link 
+            key={product._id} 
+            href={`/products/${product.category.toLowerCase()}/${product._id}`}
+            className="group flex flex-col h-full"
+          >
+            <div className="relative w-full aspect-[3/4] bg-neutral-50 border border-neutral-100 overflow-hidden mb-4">
+              {imageUrl ? (
+                <Image 
+                  src={imageUrl} 
+                  alt={product.title} 
+                  fill 
+                  sizes="(max-w-768px) 50vw, 25vw"
+                  className="object-cover object-top group-hover:scale-105 transition-transform duration-500 ease-out" 
                 />
-              </Link>
-
-              <div className="flex flex-col space-y-1 px-1">
-                <Link 
-                  href={`/products/${product.category.toLowerCase()}/${product._id}`}
-                  className="hover:underline decoration-neutral-400 underline-offset-4"
-                >
-                  <h3 className="text-xs font-bold tracking-tight text-neutral-800 uppercase line-clamp-2 leading-tight cursor-pointer">
-                    {product.title}
-                  </h3>
-                </Link>
-                
-                <div className="flex gap-2 items-baseline text-xs pt-0.5">
-                  <span className="font-black text-black">Rs. {product.price}</span>
-                  {product.originalPrice > product.price && (
-                    <span className="text-gray-400 line-through font-medium">Rs. {product.originalPrice}</span>
-                  )}
+              ) : (
+                <div className="w-full h-full bg-neutral-100 flex items-center justify-center">
+                  <span className="text-[10px] uppercase font-bold text-neutral-400 tracking-wider">No Image</span>
                 </div>
-              </div>
-
+              )}
             </div>
-          ))}
+            <div className="space-y-1 flex-grow flex flex-col justify-between">
+              <div className="space-y-1">
+                <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400 block">{product.category}</span>
+                <h3 className="text-[11px] font-bold uppercase tracking-tight text-neutral-900 line-clamp-2">{product.title}</h3>
+              </div>
+              <p className="text-xs font-black pt-1">Rs. {product.price.toLocaleString()}</p>
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
 }

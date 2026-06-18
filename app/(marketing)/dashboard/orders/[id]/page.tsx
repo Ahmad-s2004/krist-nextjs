@@ -38,7 +38,7 @@ export default function InvoiceDetailPage() {
   const [invoice, setInvoice] = useState<any>(null);
 
   useEffect(() => {
-    const record = INVOICE_DATABASE[id as string];
+    const record = INVOICE_DATABASE[id as keyof typeof INVOICE_DATABASE];
     if (record) {
       setInvoice(record);
     }
