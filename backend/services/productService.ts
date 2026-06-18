@@ -35,3 +35,17 @@ export const getKidsBestSellers = async (): Promise<IProduct[] | any> => {
     return handleServerError(error);
   }
 };
+export const getProductById = async (id: string): Promise<IProduct | any> => {
+  try {
+    await connectDB();
+    
+    if (!id) {
+      return handleServerError(new Error("Product ID is missing"));
+    }
+    
+    const product = await Product.findById(id).lean();
+    return product as unknown as IProduct;
+  } catch (error: any) {
+    return handleServerError(error);
+  }
+};
