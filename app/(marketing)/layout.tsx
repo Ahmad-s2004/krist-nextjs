@@ -16,8 +16,10 @@ export const metadata = {
   title: "Krist Ecommerce | Premium App",
   description: "Curated modern retail experiences architecture",
 };
-
-export default function RootLayout({ children }) {
+interface RootLayoutProps {
+  children: React.ReactNode;
+}
+export default function RootLayout( {children}: RootLayoutProps ) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-white text-gray-800">
