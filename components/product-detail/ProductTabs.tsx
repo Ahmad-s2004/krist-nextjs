@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+interface ProductTabsProps {
+  description: string;
+}
 
-export default function ProductTabs({ description }) {
+export default function ProductTabs({ description }: ProductTabsProps) {
   const [activeTab, setActiveTab] = useState("details");
 
   const tabs = [

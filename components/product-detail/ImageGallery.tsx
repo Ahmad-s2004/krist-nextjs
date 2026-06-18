@@ -2,13 +2,20 @@
 import { useState } from "react";
 import Image from "next/image";
 
-export default function ImageGallery({ images, title }) {
+interface ImageGalleryProps {
+  images: string[] | { img1: string }[] | any;
+  title: string;
+}
+
+export default function ImageGallery({ images, title }: ImageGalleryProps) {
   const [activeImage, setActiveImage] = useState(images[0] || "");
+
+  if (!images || !Array.isArray(images)) return null;
 
   return (
     <div className="flex flex-col-reverse md:flex-row gap-4 lg:sticky lg:top-6">
       <div className="flex md:flex-col gap-3 flex-shrink-0">
-        {images.map((img, idx) => (
+      {images.map((img: any, idx: number) => (
           <button
             key={idx}
             onClick={() => setActiveImage(img)}

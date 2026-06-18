@@ -1,4 +1,9 @@
-export default function NewsLetter({ title, desc }) {
+interface NewsLetterProps {
+  title: string;
+  desc: string;
+}
+
+export default function NewsLetter({ title, desc }: NewsLetterProps) {
   return (
     <div className="space-y-4 max-w-md w-full order-1 md:order-2">
       <h5 className="text-white font-bold uppercase tracking-widest text-xs md:text-sm">

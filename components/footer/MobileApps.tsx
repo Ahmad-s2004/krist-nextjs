@@ -1,13 +1,11 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 
 interface AppItem {
-  logo: string;
-  storeName: string;
-  subtitle: string;
-  href: string;
+  name: string;
+  meta: string;
+  icon: React.ReactNode;
 }
 
 interface MobileAppsProps {
@@ -23,21 +21,18 @@ export default function MobileApps({ title, apps }: MobileAppsProps) {
       </h5>
       <div className="flex flex-col sm:flex-row gap-3">
         {apps.map((app, index) => (
-          <a
+          <div
             key={index}
-            href={app.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-3 bg-neutral-900 border border-neutral-800 px-4 py-2 hover:border-neutral-700 transition-colors duration-200"
+            className="flex items-center gap-3 bg-neutral-900 border border-neutral-800 px-4 py-2 cursor-pointer hover:border-neutral-700 transition-colors duration-200"
           >
-            <div className="relative w-5 h-5">
-              <Image src={app.logo} alt={app.storeName} fill className="object-contain" />
+            <div className="text-white w-5 h-5 flex items-center justify-center">
+              {app.icon}
             </div>
             <div className="text-left select-none">
-              <p className="text-[9px] text-neutral-400 font-medium uppercase tracking-wider">{app.subtitle}</p>
-              <p className="text-xs text-white font-black uppercase tracking-wide">{app.storeName}</p>
+              <p className="text-[9px] text-neutral-400 font-medium uppercase tracking-wider">{app.meta}</p>
+              <p className="text-xs text-white font-black uppercase tracking-wide">{app.name}</p>
             </div>
-          </a>
+          </div>
         ))}
       </div>
     </div>

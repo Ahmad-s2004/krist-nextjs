@@ -2,7 +2,11 @@ import Image from 'next/image';
 
 const CATEGORIES = ['Kids', 'Women', 'Men'];
 
-export default function CategoryGrid({ loading }) {
+interface CategoryGridProps {
+  loading: boolean;
+}
+
+export default function CategoryGrid({ loading }: CategoryGridProps) {
   return (
     <section className="py-16 px-4 lg:px-20 max-w-7xl mx-auto space-y-10">
       <div className="text-center space-y-2">
