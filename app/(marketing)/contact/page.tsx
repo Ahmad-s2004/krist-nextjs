@@ -7,12 +7,12 @@ export default function page() {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e:any) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e:any) => {
     e.preventDefault();
     setLoading(true);
     setTimeout(() => {
@@ -26,7 +26,6 @@ export default function page() {
     <div className="min-h-[calc(100vh-73px)] w-full flex items-center justify-center bg-white px-4 sm:px-6 lg:px-8 selection:bg-black selection:text-white">
       <div className="max-w-7xl w-full py-12 md:py-20 space-y-16">
         
-        {/* Header Section */}
         <div className="text-center space-y-3">
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-black uppercase">
             Contact Us
@@ -37,10 +36,8 @@ export default function page() {
           </p>
         </div>
 
-        {/* Layout Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-20 items-start">
           
-          {/* Left Column: Contact Information (4 Columns) */}
           <div className="lg:col-span-5 space-y-10 bg-gray-50 border border-gray-100 p-8 sm:p-10">
             
             <div className="space-y-6">
@@ -51,7 +48,6 @@ export default function page() {
             </div>
 
             <div className="space-y-8">
-              {/* Phone Info */}
               <div className="flex items-start gap-4">
                 <div className="text-xl pt-0.5 flex-shrink-0">📞</div>
                 <div className="space-y-1">
@@ -61,7 +57,6 @@ export default function page() {
                 </div>
               </div>
 
-              {/* Email Info */}
               <div className="flex items-start gap-4">
                 <div className="text-xl pt-0.5 flex-shrink-0">✉️</div>
                 <div className="space-y-1">
@@ -73,7 +68,6 @@ export default function page() {
                 </div>
               </div>
 
-              {/* Location Info */}
               <div className="flex items-start gap-4">
                 <div className="text-xl pt-0.5 flex-shrink-0">📍</div>
                 <div className="space-y-1">
@@ -84,7 +78,6 @@ export default function page() {
                 </div>
               </div>
 
-              {/* Timing Info */}
               <div className="flex items-start gap-4">
                 <div className="text-xl pt-0.5 flex-shrink-0">🕒</div>
                 <div className="space-y-1">
@@ -97,7 +90,6 @@ export default function page() {
 
           </div>
 
-          {/* Right Column: Contact Form (7 Columns) */}
           <div className="lg:col-span-7 space-y-8">
             <form onSubmit={handleSubmit} className="space-y-5">
               
