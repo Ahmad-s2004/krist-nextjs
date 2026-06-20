@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { loginUserAction } from '@/backend/services/authService';
+import { syncCartAction, syncWishlistAction } from '@/backend/services/wishlistService';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -26,9 +27,41 @@ export default function LoginPage() {
       const res = await loginUserAction({ email, password });
       if (res.success == true) {
         setSuccess(res.message || "Login successful! Redirecting...");
+        
+        try {
+          const localCartString = localStorage.getItem("krist_cart") || "[]";
+          const localCart = JSON.parse(localCartString);
+          if (Array.isArray(localCart) && localCart.length > 0) {
+            const formattedLocalCart = localCart.map((item: any) => ({
+              productId: item._id || item.productId,
+              quantity: item.quantity || 1,
+              size: item.size || "",
+              color: item.color || ""
+            }));
+            await syncCartAction(res.user.id || res.user._id, formattedLocalCart);
+            localStorage.removeItem("krist_cart");
+          }
+        } catch (cartErr) {
+          console.error("Cart sync failed:", cartErr);
+        }
+
+        try {
+          const localWishlistString = localStorage.getItem("krist_wishlist") || "[]";
+          const localWishlist = JSON.parse(localWishlistString);
+          if (Array.isArray(localWishlist) && localWishlist.length > 0) {
+            const formattedWishlistIds = localWishlist.map((item: any) => 
+              typeof item === 'string' ? item : (item._id || item.productId)
+            ).filter(Boolean);
+            await syncWishlistAction(res.user.id || res.user._id, formattedWishlistIds);
+            localStorage.removeItem("krist_wishlist");
+          }
+        } catch (wishErr) {
+          console.error("Wishlist sync failed:", wishErr);
+        }
+
         setEmail('');
         setPassword('');
-        localStorage.setItem("isLoggedIn", "true")
+        localStorage.setItem("isLoggedIn", "true");
         window.location.href = '/';
       } else {
         setError(res.message || "Invalid credentials provided");

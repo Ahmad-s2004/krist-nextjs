@@ -10,16 +10,13 @@ export default function DashboardPage() {
   useEffect(() => {
     setIsMounted(true);
     
-    // 🔥 Client-side layout hai, yahan localStorage direct read hogi
     const loggedIn = localStorage.getItem("isLoggedIn") === "true";
     
     if (!loggedIn) {
-      // Agar logged in nahi hai, toh redirect to signin
       router.push("/signin?callbackUrl=%2Fdashboard");
     }
   }, [router]);
 
-  // Hydration white flash bypass check
   if (!isMounted) {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-white font-sans">

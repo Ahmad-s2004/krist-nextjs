@@ -5,6 +5,7 @@ import { Provider, useDispatch } from "react-redux";
 import { store } from "@/redux/store";
 import { addToCart } from "@/redux/cartSlice";
 import QuantitySelector from "@/components/cart/QuantitySelector";
+import { addToCartAction } from "@/backend/services/wishlistService";
 
 interface ClientWrapperProps {
   product: {
@@ -25,25 +26,45 @@ function ProductDetailsInner({ product, children }: ClientWrapperProps) {
   const [selectedSize, setSelectedSize] = useState(product.sizes[0] || "S");
   const [selectedColor, setSelectedColor] = useState(product.colors[0] || "");
   const [quantity, setQuantity] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleAddToBag = () => {
-    dispatch(
-      addToCart({
-        id: product.id,
-        title: product.title,
-        price: product.price,
-        image: product.images[0] || "",
-        size: selectedSize,
-        color: selectedColor,
-        quantity: quantity,
-      })
-    );
-    setSelectedSize("S")
-    setQuantity(1)
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+  const handleAddToBag = async () => {
+    setIsSubmitting(true);
+    
+    try {
+      const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+      
+      if (loggedIn) {
+        const userId = localStorage.getItem("userId") || ""; 
+        if (userId) {
+          await addToCartAction(userId, product.id, quantity, selectedSize, selectedColor);
+        }
+      }
+
+      dispatch(
+        addToCart({
+          id: product.id,
+          title: product.title,
+          price: product.price,
+          image: product.images[0] || "",
+          size: selectedSize,
+          color: selectedColor,
+          quantity: quantity,
+        })
+      );
+
+      setSelectedSize("S");
+      setQuantity(1);
+      
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } catch (error) {
+      console.error("Failed to add item to cart:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -100,9 +121,14 @@ function ProductDetailsInner({ product, children }: ClientWrapperProps) {
       <div className="pt-4">
         <button 
           onClick={handleAddToBag}
-          className="w-full bg-black text-white border border-black py-4 font-bold text-xs tracking-widest uppercase hover:bg-transparent hover:text-black transition-all duration-300 rounded-none shadow-sm"
+          disabled={isSubmitting}
+          className="w-full bg-black text-white border border-black py-4 font-bold text-xs tracking-widest uppercase hover:bg-transparent hover:text-black transition-all duration-300 rounded-none shadow-sm disabled:opacity-5 flex items-center justify-center gap-2"
         >
-          Add To Bag
+          {isSubmitting ? (
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          ) : (
+            "Add To Bag"
+          )}
         </button>
       </div>
 
