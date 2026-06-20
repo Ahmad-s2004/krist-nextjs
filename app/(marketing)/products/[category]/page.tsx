@@ -35,6 +35,7 @@ export default async function ShopCategoryPage({ params, searchParams }: Props) 
       if (currentSortBy === "price-high") return b.price - a.price;
       return 0;
     });
+    const plainProducts = JSON.parse(JSON.stringify(filteredProducts));
 
   return (
     <div className="min-h-screen w-full bg-white px-4 sm:px-6 lg:px-8 py-10 md:py-16 selection:bg-black selection:text-white flex justify-center font-sans">
@@ -60,7 +61,7 @@ export default async function ShopCategoryPage({ params, searchParams }: Props) 
           />
 
           <div className="lg:col-span-3">
-            <ProductGrid products={filteredProducts} loading={false} />
+            <ProductGrid products={plainProducts} loading={false} />
           </div>
 
         </div>
