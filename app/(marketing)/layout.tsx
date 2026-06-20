@@ -1,6 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import HeaderNavbar from "@/components/navigation/HeaderNavbar";
 import "../globals.css";
+import { Providers } from "@/redux/Providers";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +26,9 @@ export default function RootLayout( {children}: RootLayoutProps ) {
     <>
         <HeaderNavbar />
         <main className="flex-1">
+    <Providers>
           {children}
+    </Providers>
         </main>
     </>
   );

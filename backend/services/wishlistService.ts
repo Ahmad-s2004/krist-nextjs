@@ -112,3 +112,29 @@ interface LocalCartItem {
       return handleServerError(error);
     }
   };
+  export const toggleWishlistAction = async (userId: string, productId: string) => {
+  try {
+    await connectDB();
+    const user = await User.findById(userId);
+    if (!user) return requestHandler(false, 404, "User not found");
+
+    const currentWishlist: string[] = user.wishlist ? user.wishlist.map((id: any) => id.toString()) : [];
+    
+    const itemIndex = currentWishlist.indexOf(productId);
+
+    if (itemIndex > -1) {
+      currentWishlist.splice(itemIndex, 1);
+    } else {
+      currentWishlist.push(productId);
+    }
+
+    user.wishlist = currentWishlist;
+    await user.save();
+
+    const updatedUser = await User.findById(userId).populate("wishlist");
+
+    return requestHandler(true, 200, "Wishlist updated successfully", updatedUser.wishlist);
+  } catch (error) {
+    return handleServerError(error);
+  }
+};
