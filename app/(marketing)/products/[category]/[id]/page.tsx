@@ -5,6 +5,7 @@ import ProductTabs from "@/components/product-detail/ProductTabs";
 import ProductDetailsClientWrapper from "@/components/product-detail/ProductDetailsClientWrapper";
 import { getProductById } from "@/backend/services/productService";
 import { Providers } from "@/redux/Providers";
+import Footer from "@/components/footer";
 
 interface ProductPageProps {
   params: Promise<{ category: string; id: string }>;
@@ -73,6 +74,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           </div>
         </div>
       </div>
+      <Footer/>
     </Providers>
   );
 }

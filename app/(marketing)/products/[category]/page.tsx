@@ -3,6 +3,7 @@ import FilterPanel from "@/components/products/FilterPanel";
 import ProductGrid from "@/components/products/ProductGrid";
 import SortDropdown from "@/components/products/SortDropdown";
 import { getProductsByCategory } from "@/backend/services/productService";
+import Footer from "@/components/footer";
 
 interface Props {
   params: Promise<{ category: string }>;
@@ -38,6 +39,7 @@ export default async function ShopCategoryPage({ params, searchParams }: Props) 
     const plainProducts = JSON.parse(JSON.stringify(filteredProducts));
 
   return (
+    <>
     <div className="min-h-screen w-full bg-white px-4 sm:px-6 lg:px-8 py-10 md:py-16 selection:bg-black selection:text-white flex justify-center font-sans">
       <div className="max-w-7xl w-full space-y-8">
 
@@ -68,5 +70,7 @@ export default async function ShopCategoryPage({ params, searchParams }: Props) 
 
       </div>
     </div>
+    <Footer/>
+    </>
   );
 }

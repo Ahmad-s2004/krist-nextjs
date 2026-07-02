@@ -9,6 +9,7 @@ import Link from "next/link";
 import QuantitySelector from "@/components/cart/QuantitySelector";
 import { useRouter } from "next/navigation";
 import AuthAlertModal from "@/components/ui/AuthAlertModal";
+import Footer from "@/components/footer";
 
 
 function CartPageInner() {
@@ -70,6 +71,7 @@ function CartPageInner() {
   }
 
   return (
+    <>
     <main className="min-h-screen bg-white py-12 px-4 lg:px-20 max-w-7xl mx-auto font-sans text-black selection:bg-black selection:text-white">
       <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight mb-10">Your Bag</h1>
       
@@ -136,6 +138,8 @@ function CartPageInner() {
         </div>
       </div>
     </main>
+    <Footer/>
+    </>
   );
 }
 
