@@ -10,13 +10,14 @@ import mongoose from 'mongoose'
 export const createOrder = async(orderData: IOrder): Promise<any> =>{
     try {
         await connectDB()
-        const {productId, quantity, size, color, firstName, lastName, streetAddress, city, phoneNo, subtotal, shippingCost,} = orderData;
-        if (!productId || !firstName || !streetAddress || !phoneNo || subtotal === undefined) {
+        const {userId, productId, quantity, size, color, firstName, lastName, streetAddress, city, phoneNo, subtotal, shippingCost,} = orderData;
+        if (!userId || !productId || !firstName || !streetAddress || !phoneNo || subtotal === undefined) {
             return requestHandler(false, 404, "All fields are required.")            
           }
         const totalPrice= Number(subtotal) + Number(shippingCost)
         const trackingId = "KRIST-" + Math.floor(100000 + Math.random() * 900000);
         const newOrder = new Order({
+            userId: new mongoose.Types.ObjectId(userId),
             productId: new mongoose.Types.ObjectId(productId),
             quantity,
             size,
