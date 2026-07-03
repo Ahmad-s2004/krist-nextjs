@@ -39,3 +39,21 @@ export const createOrder = async(orderData: IOrder): Promise<any> =>{
         return handleServerError(error)
     }
 } 
+export const getAllOrder = async (userId: string): Promise<any> => {
+    try {
+        await connectDB();
+        if (!userId) return requestHandler(false, 400, "UserID is required.");
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return requestHandler(false, 400, "Invalid User ID format.");
+        }
+        const orders = await Order.find({ userId }).sort({ createdAt: -1 });
+        if (orders.length > 0) {
+            return requestHandler(true, 200, "Orders found successfully.", orders);
+        } else {
+            return requestHandler(true, 200, "No orders exist for this user.", []);
+        }
+
+    } catch (error) {
+        return handleServerError(error);
+    }
+};
