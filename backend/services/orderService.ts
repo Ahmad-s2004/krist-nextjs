@@ -7,21 +7,45 @@ import mongoose from 'mongoose'
 
 
 
-export const createOrder = async(orderData: IOrder): Promise<any> =>{
+export const createOrder = async (orderData: IOrder): Promise<any> => {
     try {
-        await connectDB()
-        const {userId, productId, quantity, size, color, firstName, lastName, streetAddress, city, phoneNo, subtotal, shippingCost,} = orderData;
-        if (!userId || !productId || !firstName || !streetAddress || !phoneNo || subtotal === undefined) {
-            return requestHandler(false, 404, "All fields are required.")            
-          }
-        const totalPrice= Number(subtotal) + Number(shippingCost)
+        await connectDB();
+        const {
+            userId, 
+            items, 
+            firstName, 
+            lastName, 
+            streetAddress, 
+            city, 
+            phoneNo, 
+            subtotal, 
+            shippingCost
+        } = orderData;
+
+        if (!userId || !items || !Array.isArray(items) || items.length === 0 || !firstName || !streetAddress || !phoneNo || subtotal === undefined) {
+            return requestHandler(false, 400, "All fields including order items are required.");            
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(userId)) return requestHandler(false, 400, "Invalid User ID format.");
+
+        const formattedItems = items.map(item => {
+            if (!item.productId || !mongoose.Types.ObjectId.isValid(item.productId as any)) {
+                return requestHandler(false, 404, "Invalid or missing Product ID in items.")
+            }
+            return {
+                productId: new mongoose.Types.ObjectId(item.productId as any),
+                quantity: item.quantity || 1,
+                size: item.size || "",
+                color: item.color || ""
+            };
+        });
+
+        const totalPrice = Number(subtotal) + Number(shippingCost);
         const trackingId = "KRIST-" + Math.floor(100000 + Math.random() * 900000);
+
         const newOrder = new Order({
             userId: new mongoose.Types.ObjectId(userId),
-            productId: new mongoose.Types.ObjectId(productId),
-            quantity,
-            size,
-            color,
+            items: formattedItems,
             firstName,
             lastName,
             streetAddress,
@@ -32,14 +56,19 @@ export const createOrder = async(orderData: IOrder): Promise<any> =>{
             subtotal,
             shippingCost,
             totalPrice,
-          });
+        });
         
-          let savedOrder = await newOrder.save();
-          return requestHandler(true, 201, "Order saved successfully", savedOrder)
-    } catch (error) {
-        return handleServerError(error)
+        let savedOrder = await newOrder.save();
+        return requestHandler(true, 201, "Order saved successfully", savedOrder);
+    } catch (error: any) {
+        if (error.message.includes("Product ID")) {
+            return requestHandler(false, 400, error.message);
+        }
+        return handleServerError(error);
     }
-} 
+};
+
+
 export const getAllOrder = async (userId: string): Promise<any> => {
     try {
         await connectDB();
