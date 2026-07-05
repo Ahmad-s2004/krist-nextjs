@@ -58,3 +58,23 @@ export const getAllOrder = async (userId: string): Promise<any> => {
         return handleServerError(error);
     }
 };
+
+
+export const getSingleOrder = async (userId: string, orderId: string): Promise<any> => {
+    try {
+        await connectDB();
+
+        if (!userId || !orderId) return requestHandler(false, 400, "UserID and OrderID are required.")
+
+        if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(orderId)) {
+            return requestHandler(false, 400, "Invalid UserID or OrderID format.")
+        }
+        const order = await Order.findOne({ _id: orderId, userId }).populate("productId");
+        
+        if (!order) return requestHandler(false, 404, "No order found.");
+        return requestHandler(true, 200, "Order found successfully.", order);
+
+    } catch (error) {
+        return handleServerError(error);
+    }
+};
