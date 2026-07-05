@@ -79,8 +79,9 @@ export const getAllOrder = async (userId: string): Promise<any> => {
             return requestHandler(false, 400, "Invalid User ID format.");
         }
         const orders = await Order.find({ userId }).sort({ createdAt: -1 });
-        if (orders.length > 0) {
-            return requestHandler(true, 200, "Orders found successfully.", orders);
+        const cleanOrder = JSON.parse(JSON.stringify(orders));
+        if (cleanOrder.length > 0) {
+            return requestHandler(true, 200, "Orders found successfully.", cleanOrder);
         } else {
             return requestHandler(true, 200, "No orders exist for this user.", []);
         }
