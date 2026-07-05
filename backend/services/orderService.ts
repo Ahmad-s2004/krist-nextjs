@@ -98,7 +98,7 @@ export const getSingleOrder = async (userId: string, orderId: string): Promise<a
         if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(orderId)) {
             return requestHandler(false, 400, "Invalid UserID or OrderID format.")
         }
-        const order = await Order.findOne({ _id: orderId, userId }).populate("productId");
+        const order = await Order.findOne({ _id: orderId, userId });
         
         if (!order) return requestHandler(false, 404, "No order found.");
         return requestHandler(true, 200, "Order found successfully.", order);
