@@ -1,11 +1,17 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface IOrder extends Document {
-  userId: mongoose.Types.ObjectId;
-  productId: mongoose.Types.ObjectId;
+
+interface IOrderItem {
+  productId: Schema.Types.ObjectId;
   quantity: number;
   size?: string;
   color?: string;
+}
+
+export interface IOrder extends Document {
+  userId: mongoose.Types.ObjectId;
+  productId: mongoose.Types.ObjectId;
+  items: IOrderItem[];
   firstName: string;
   lastName: string;
   streetAddress: string;
@@ -21,10 +27,14 @@ export interface IOrder extends Document {
 const OrderSchema: Schema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User'},
-    productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
-    quantity: { type: Number, required: true, default: 1 },
-    size: { type: String },
-    color: { type: String },
+    items: [
+      {
+        productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
+        quantity: { type: Number, required: true, default: 1 },
+        size: { type: String },
+        color: { type: String },
+      }
+    ],
 
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
