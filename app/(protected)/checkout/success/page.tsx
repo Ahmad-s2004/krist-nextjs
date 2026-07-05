@@ -4,11 +4,18 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function OrderSuccessPage() {
-  const [orderId, setOrderId] = useState("");
+  const [trackingId, setTrackingId] = useState("");
 
   useEffect(() => {
-    const generatedToken = "KRST-" + Math.floor(100000 + Math.random() * 900000);
-    setOrderId(generatedToken);
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      
+      const id = params.get("trackingId") || params.get("trackingID");
+      
+      if (id) {
+        setTrackingId(id);
+      }
+    }
   }, []);
 
   const trackingSteps = [
@@ -23,7 +30,7 @@ export default function OrderSuccessPage() {
       <div className="max-w-2xl w-full text-center space-y-10 md:space-y-12">
         
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-16 h-16 bg-black flex items-center justify-center rounded-none shadow-sm animate-fade-in">
+          <div className="w-16 h-16 bg-black flex items-center justify-center rounded-none shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="white" className="w-8 h-8">
               <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
             </svg>
@@ -41,7 +48,7 @@ export default function OrderSuccessPage() {
         <div className="bg-neutral-50 border border-neutral-100 p-6 rounded-none text-left space-y-4 max-w-md mx-auto">
           <div className="flex justify-between items-center border-b border-neutral-200/60 pb-3 text-xs font-bold uppercase tracking-widest text-gray-400">
             <span>Reference Specifications</span>
-            <span className="text-black font-black">{orderId || "COMPILING..."}</span>
+            <span className="text-black font-black">{trackingId || "FETCHING..."}</span>
           </div>
           <div className="space-y-2 text-xs font-medium text-gray-500 tracking-wide">
             <p className="flex justify-between"><span>Estimated Delivery:</span> <span className="text-black font-bold">3 - 5 Working Days</span></p>
@@ -56,13 +63,11 @@ export default function OrderSuccessPage() {
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 sm:gap-4 relative text-left">
             {trackingSteps.map((step, idx) => (
               <div key={idx} className="flex sm:flex-col items-start sm:items-center gap-4 sm:gap-2 group relative">
-                
                 <div className={`w-3 h-3 flex-shrink-0 rounded-none border transition-all duration-300 sm:mt-1 ${
                   step.active 
                     ? "bg-black border-black ring-4 ring-neutral-100" 
                     : "bg-white border-neutral-300"
                 }`} />
-
                 <div className="space-y-0.5 sm:text-center">
                   <h4 className={`text-xs font-bold uppercase tracking-wider ${step.active ? "text-black" : "text-gray-400"}`}>
                     {step.label}

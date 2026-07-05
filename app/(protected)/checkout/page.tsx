@@ -92,7 +92,8 @@ export default function CheckoutPage() {
 
       if (response && response.success) {
         localStorage.removeItem("krist_cart");
-        router.push("/checkout/success");
+        const trackingId = response.data?.trackingId || "";
+        router.push(`/checkout/success?trackingID:${trackingId}`);
       } else {
         setError(response?.message || "Something went wrong.");
       }
