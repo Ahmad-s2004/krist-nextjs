@@ -1,4 +1,5 @@
-import {Order, IOrder} from '@/backend/models/Order'
+'use server'
+import { Order, IOrder } from '@/backend/models/Order'
 import { handleServerError } from "../lib/errorHandler";
 import { requestHandler } from '../lib/requestHandler';
 import { connectDB } from "../config/db";
@@ -11,19 +12,19 @@ export const createOrder = async (orderData: IOrder): Promise<any> => {
     try {
         await connectDB();
         const {
-            userId, 
-            items, 
-            firstName, 
-            lastName, 
-            streetAddress, 
-            city, 
-            phoneNo, 
-            subtotal, 
+            userId,
+            items,
+            firstName,
+            lastName,
+            streetAddress,
+            city,
+            phoneNo,
+            subtotal,
             shippingCost
         } = orderData;
 
         if (!userId || !items || !Array.isArray(items) || items.length === 0 || !firstName || !streetAddress || !phoneNo || subtotal === undefined) {
-            return requestHandler(false, 400, "All fields including order items are required.");            
+            return requestHandler(false, 400, "All fields including order items are required.");
         }
 
         if (!mongoose.Types.ObjectId.isValid(userId)) return requestHandler(false, 400, "Invalid User ID format.");
@@ -52,14 +53,15 @@ export const createOrder = async (orderData: IOrder): Promise<any> => {
             city,
             phoneNo,
             trackingId,
-            status: "processing", 
+            status: "processing",
             subtotal,
             shippingCost,
             totalPrice,
         });
-        
+
         let savedOrder = await newOrder.save();
-        return requestHandler(true, 201, "Order saved successfully", savedOrder);
+        const cleanOrder = JSON.parse(JSON.stringify(savedOrder));
+        return requestHandler(true, 201, "Order saved successfully", cleanOrder);
     } catch (error: any) {
         if (error.message.includes("Product ID")) {
             return requestHandler(false, 400, error.message);
@@ -99,7 +101,7 @@ export const getSingleOrder = async (userId: string, orderId: string): Promise<a
             return requestHandler(false, 400, "Invalid UserID or OrderID format.")
         }
         const order = await Order.findOne({ _id: orderId, userId });
-        
+
         if (!order) return requestHandler(false, 404, "No order found.");
         return requestHandler(true, 200, "Order found successfully.", order);
 
